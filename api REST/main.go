@@ -1,34 +1,127 @@
-package main
+/*package main
+
+import (
+  "encoding/json"
+  "log"
+	"net/http"
+	"fmt"
+  "github.com/gorilla/mux"
+)
+
+type Person struct {
+  ID string `json:"id,omitempty"`
+  FirstName string `json:"firstname,omitempty"`
+  LastName string `json:"lastname,omitempty"`
+  Address *Address `json:"address,omitempty"`
+}
+
+type Address struct {
+  City string `json:"city,omitempty"`
+  State string `json:"state,omitempty"`
+}
+
+var people []Person
+
+// EndPoints
+func GetPersonEndpoint(w http.ResponseWriter, req *http.Request){
+  params := mux.Vars(req)
+  for _, item := range people {
+		fmt.Print(item)
+    if item.ID == params["id"] {
+      json.NewEncoder(w).Encode(req)
+      return
+    }
+  }
+  json.NewEncoder(w).Encode(req)
+}
+
+func GetPeopleEndpoint(w http.ResponseWriter, req *http.Request){
+  json.NewEncoder(w).Encode(people)
+}
+
+func CreatePersonEndpoint(w http.ResponseWriter, req *http.Request){
+  params := mux.Vars(req)
+  var person Person
+	_ = json.NewDecoder(req.Body).Decode(&person)
+	fmt.Print(req.Body)
+  person.ID = params["id"]
+  people = append(people, person)
+  json.NewEncoder(w).Encode(person)
+
+}
+
+func DeletePersonEndpoint(w http.ResponseWriter, req *http.Request) {
+  params := mux.Vars(req)
+  for index, item := range people {
+    if item.ID == params["id"] {
+      people = append(people[:index], people[index + 1:]...)
+      break
+    }
+  }
+  json.NewEncoder(w).Encode(people)
+}
+
+func main() {
+  router := mux.NewRouter()
+  
+  // adding example data
+  people = append(people, Person{ID: "1", FirstName:"Ryan", LastName:"Ray", Address: &Address{City:"Dubling", State:"California"}})
+  people = append(people, Person{ID: "2", FirstName:"Maria", LastName:"Ray"})
+
+  // endpoints
+  router.HandleFunc("/people", GetPeopleEndpoint).Methods("GET")
+  router.HandleFunc("/people/{id}", GetPersonEndpoint).Methods("GET")
+  router.HandleFunc("/people/{id}", CreatePersonEndpoint).Methods("POST")
+  router.HandleFunc("/people/{id}", DeletePersonEndpoint).Methods("DELETE")
+
+  log.Fatal(http.ListenAndServe(":3000", router))
+}
+*/package main
 
 
 import (
 	"encoding/json"
 	"net/http"
 	"github.com/gorilla/mux"
-    "database/sql"
+	"github.com/gorilla/handlers"
+  "database/sql"
 	"log"
 	"fmt"
     _ "github.com/lib/pq"
 )
 
 type Receta struct {
-	nombre string `json:"nombre"`
-	preparacion string `json:"preparacion"`
-	ingredientes []Ingrediente `json:"ingredientes"`
+	Nombre string `json:"nombre,omitempty"`
+	Preparacion string `json:"preparacion,omitempty"`
+	Ingredientes []Ingrediente `json:"ingredientes,omitempty"`
 }
 
 type Ingrediente struct {
 	
-	nombre string `json:"nombre,omitempty"`
-	unidad string `json:"unidad,omitempty"`
-	cantidad float32  `json:"cantidad,omitempty"`
+	Nombre string `json:"nombre,omitempty"`
+	Unidad string `json:"unidad,omitempty"`
+	Cantidad float32  `json:"cantidad,omitempty"`
 }
-  
+	
+
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
 
 
 // EndPoints
 func crearReceta(w http.ResponseWriter, req *http.Request){
 
+	enableCors(&w)
+
+	var recet Receta 
+	_ = json.NewDecoder(req.Body).Decode(&recet)
+	
+	
+	fmt.Println(recet)
+
+	json.NewEncoder(w).Encode(recet)
+	
 }
 
 func consultarReceta(w http.ResponseWriter, req *http.Request){
@@ -63,12 +156,12 @@ func consultarReceta(w http.ResponseWriter, req *http.Request){
         if err := rows.Scan(&nombre,&preparacion,&nomIngrediente,&cantidad,&unidad); err != nil {
             log.Fatal(err)
 		}
-		receta.nombre = nombre
-		receta.preparacion = preparacion
-		ingrediente.nombre = nomIngrediente
-		ingrediente.unidad = unidad
-		ingrediente.cantidad = cantidad
-		receta.ingredientes = append(receta.ingredientes,ingrediente)	
+		receta.Nombre = nombre
+		receta.Preparacion = preparacion
+		ingrediente.Nombre = nomIngrediente
+		ingrediente.Unidad = unidad
+		ingrediente.Cantidad = cantidad
+		receta.Ingredientes = append(receta.Ingredientes,ingrediente)	
 		
 	}
 	fmt.Print(receta)
@@ -101,7 +194,7 @@ func borrarReceta(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-/*	 
+/*
 	// Connect to the "bank" database.
 	db, err := sql.Open("postgres", "postgresql://chef@localhost:26257/recetas?sslmode=disable")
 	 
@@ -139,8 +232,8 @@ func main() {
 		"('huevo frito','aceite',0.2,'mLt'), ('huevo frito','huevo','1', 'Unid')"); err != nil {
 		log.Fatal(err)
 	}
-
 */
+
   router := mux.NewRouter()
 
   // endpoints
@@ -149,5 +242,8 @@ func main() {
   router.HandleFunc("/actualizar", actualizarReceta).Methods("POST")
   router.HandleFunc("/receta/{nombre}", borrarReceta).Methods("DELETE")
 
-  log.Fatal(http.ListenAndServe(":3000", router))
+	log.Fatal(http.ListenAndServe(":3000", handlers.CORS(handlers.AllowedHeaders(
+		[]string{"X-Requested-With", "Content-Type", "Authorization"}), 
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}),
+		handlers.AllowedOrigins([]string{"*"}))(router)))
 }
