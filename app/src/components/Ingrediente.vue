@@ -49,12 +49,6 @@ export default {
 
     props:{
         num:Number,
-    },
-
-    methods:{
-        mandarDatos: function (e){
-            console.log(e)
-        }
     }
     
 }

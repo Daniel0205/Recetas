@@ -25,7 +25,7 @@
 
 
 import Vue from 'vue'
-import Ingrediente from './ingrediente'
+import Ingrediente from './Ingrediente'
 import VueResource from 'vue-resource'
 Vue.use(VueResource);
 
@@ -84,9 +84,9 @@ export default {
                     {preparacion:this.preparacion,
                     nombre:this.nombre,
                     ingredientes:this.ingredientes
-                }).then(response => {
-                console.log(response.Body)
-                $emit('creado', {creado:true})
+            }).then(response => {
+                console.log(response)
+                this.$emit('creado')
                 alert("Si, sirvio!!! :D")
                 
             }, response => {

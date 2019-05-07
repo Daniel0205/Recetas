@@ -138,6 +138,7 @@ func consultarReceta(w http.ResponseWriter, req *http.Request){
 
 	q := "SELECT * FROM receta NATURAL JOIN ingredientes WHERE nombre='"+params["nombre"]+"';"
 	
+	
 	// Print out the balances.
 	rows, err := db.Query(q)
 	if err != nil {
@@ -167,6 +168,47 @@ func consultarReceta(w http.ResponseWriter, req *http.Request){
 	fmt.Print(receta)
 	fmt.Print("\n")
 	json.NewEncoder(w).Encode(receta)
+}
+
+
+
+func consultarNombres(w http.ResponseWriter, req *http.Request){
+	
+
+	var nombres []string
+
+	db, err := sql.Open("postgres", "postgresql://chef@localhost:26257/recetas?sslmode=disable")
+	 if err != nil {
+		log.Fatal("error connecting to the database: ", err)
+	}
+
+	q := "SELECT nombre FROM receta ;"
+	
+	
+	// Print out the balances.
+	rows, err := db.Query(q)
+	if err != nil {
+		log.Fatal(err)
+	}
+	
+	defer rows.Close()
+	
+	fmt.Print(q)
+	fmt.Print("\n")
+
+
+	for rows.Next() {
+		var nombre string 
+		
+		if err := rows.Scan(&nombre); err != nil {
+				log.Fatal(err)
+		}
+		
+		nombres=append(nombres,nombre)
+	}
+	fmt.Print(nombres)
+	fmt.Print("\n")
+	json.NewEncoder(w).Encode(nombres)
 }
 
 func actualizarReceta(w http.ResponseWriter, req *http.Request){
@@ -237,7 +279,8 @@ func main() {
   router := mux.NewRouter()
 
   // endpoints
-  router.HandleFunc("/receta", crearReceta).Methods("POST")
+	router.HandleFunc("/receta", crearReceta).Methods("POST")
+	router.HandleFunc("/receta", consultarNombres).Methods("GET")
   router.HandleFunc("/receta/{nombre}", consultarReceta).Methods("GET")
   router.HandleFunc("/actualizar", actualizarReceta).Methods("POST")
   router.HandleFunc("/receta/{nombre}", borrarReceta).Methods("DELETE")
