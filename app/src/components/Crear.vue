@@ -7,7 +7,8 @@
             
         ></b-input>
         <Ingrediente v-for="(ingrediente,index) in ingredientes" 
-        v-on:childToParent="actualizarComponente" :num="index" v-bind:key="index" />
+        v-on:childToParent="actualizarComponente" :num="index" v-bind:key="index" 
+        :nom="ingrediente.nombre.toUpperCase()" :can="ingrediente.cantidad" :uni="ingrediente.unidad"/>
 
         <b-button variant="outline-primary" v-on:click="agregarIngrediente" >Agregar ingrediente</b-button>
         <b-button variant="outline-primary" v-on:click="eliminarIngrediente" >Eliminar ingrediente</b-button>
@@ -15,7 +16,10 @@
             placeholder="Preparacion"
             v-model="preparacion"
         ></b-input>
-        <b-button variant="outline-primary"  v-on:click="crear">Crear receta</b-button>
+        <b-button v-if="tipo=='crear'" variant="outline-primary"  v-on:click="crear">Crear receta</b-button>
+        <b-button v-if="tipo=='actualizar'" variant="outline-primary"  v-on:click="actualizar">Actualizar receta</b-button>
+        <b-button v-if="tipo=='actualizar'" variant="outline-primary"  
+        v-on:click="$emit('cancelar')">cancelar</b-button>
 
     </div>
 </template>
@@ -38,7 +42,7 @@ export default {
 
     data () {
         return{
-            estado:'inicio',
+            nombreInicial:'',
             preparacion:'',
             nombre:'',
             ingredientes:[{nombre:'',
@@ -47,7 +51,28 @@ export default {
         }
     },
 
+    created: function(){
+        this.preparacion=this.prep,
+        this.nombreInicial=this.nom,
+        this.nombre=this.nom,
+        this.ingredientes=this.ing
+    },
 
+    props:{
+        tipo:String,
+        prep:{
+            type: String,
+            default: ''
+        },
+        nom:{
+            type: String,
+            default: ''
+        },
+        ing:{
+            type: Array,
+            default: []
+        }
+    },
 
     methods:{
         agregarIngrediente: function(){
@@ -93,6 +118,10 @@ export default {
                 console.log(response.Body)
                 alert("No, sirvio!!! :(")
             });
+        },
+
+        actualizar: function(){
+
         }
     }    
 }

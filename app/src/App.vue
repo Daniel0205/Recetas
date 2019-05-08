@@ -4,7 +4,7 @@
     <b-button variant="outline-primary" id="crear" v-on:click="cambiarEstado">Crear receta</b-button>
     <b-button variant="outline-primary" id="consultar" v-on:click="cambiarEstado">Consultar receta</b-button>
     <div v-if="estado=='crear'">
-      <Crear v-on:creado="estado='inicio'"></Crear>
+      <Crear v-on:creado="estado='inicio'" :tipo="'crear'"></Crear>
     </div>
     <Consultar v-if="estado=='consultar'"></Consultar>
   </div> 
@@ -33,7 +33,6 @@ export default {
 
   methods: {
     cambiarEstado: function (event){
-      console.log(event)
       
       switch(event.target.id){
         case 'crear':

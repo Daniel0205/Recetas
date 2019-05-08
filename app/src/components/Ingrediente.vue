@@ -49,8 +49,27 @@ export default {
 
     props:{
         num:Number,
-    }
-    
+        nom: {
+            type: String,
+            default: ''
+        },
+        uni: {
+            type: String,
+            default: 'null'
+        },
+        can: {
+            type: Number,
+            default: 0
+        }
+    },
+
+    created: function(){
+        
+        this.unidad=this.uni,
+        this.nombre=this.nom,
+        this.cantidad=this.can
+        
+    }    
 }
 </script>
 <style>
