@@ -2,9 +2,10 @@
 
     <div>
         <b-input
+            type="text"
             placeholder="Nombre Receta"
             v-model="nombre"
-            
+            required            
         ></b-input>
         <Ingrediente v-for="(ingrediente,index) in ingredientes" 
         v-on:childToParent="actualizarComponente" :num="index" v-bind:key="index" 
@@ -13,8 +14,10 @@
         <b-button variant="outline-primary" v-on:click="agregarIngrediente" >Agregar ingrediente</b-button>
         <b-button variant="outline-primary" v-on:click="eliminarIngrediente" >Eliminar ingrediente</b-button>
         <b-input
+            type="text"
             placeholder="Preparacion"
             v-model="preparacion"
+            required
         ></b-input>
         <b-button v-if="tipo=='crear'" variant="outline-primary"  v-on:click="crear">Crear receta</b-button>
         <b-button v-if="tipo=='actualizar'" variant="outline-primary"  v-on:click="actualizar">Actualizar receta</b-button>
@@ -70,7 +73,7 @@ export default {
         },
         ing:{
             type: Array,
-            default: []
+            default: () => []
         }
     },
 
@@ -105,35 +108,54 @@ export default {
         
 
         crear: function(){
-            this.$http.post('http://localhost:3000/receta',
-                    {preparacion:this.preparacion,
-                    nombre:this.nombre,
-                    ingredientes:this.ingredientes
-            }).then(response => {
-                console.log(response)
-                this.$emit('creado')
-                alert("Si, sirvio!!! :D")
-                
-            }, response => {
-                console.log(response.Body)
-                alert("No, sirvio!!! :(")
-            });
+            
+            if(this.nombre.length!=0 && this.preparacion.length!=0 && this.ingredientesLlenos()){
+                this.$http.post('http://localhost:3000/receta',
+                        {preparacion:this.preparacion,
+                        nombre:this.nombre,
+                        ingredientes:this.ingredientes
+                }).then(response => {
+                    console.log(response)
+                    this.$emit('creado')
+                    alert("Si, sirvio!!! :D")
+                    
+                }, response => {
+                    alert("No, sirvio!!! :(")
+                });
+            }
+            else{
+                alert("Llenar todos los campos")
+            }
+        },
+
+        ingredientesLlenos:function(){
+            for (let i = 0; i < this.ingredientes.length; i++) {
+                 if(this.ingredientes[i].nombre.length==0
+                  || this.ingredientes[i].preparacion.length==0)return false
+            }
+               
+            return true
         },
 
         actualizar: function(){
-            this.$http.post('http://localhost:3000/receta/'+this.nombreInicial,
-                    {preparacion:this.preparacion,
-                    nombre:this.nombre,
-                    ingredientes:this.ingredientes
-            }).then(response => {
-                console.log(response)
-                this.$emit('actualizado',this.nombre)
-                alert("Si, sirvio!!! :D")
-                
-            }, response => {
-                console.log(response.Body)
-                alert("No, sirvio!!! :(")
-            });
+            if(this.nombre.length!=0 && this.preparacion.length!=0 && this.ingredientesLlenos()){
+                this.$http.post('http://localhost:3000/receta/'+this.nombreInicial,
+                        {preparacion:this.preparacion,
+                        nombre:this.nombre,
+                        ingredientes:this.ingredientes
+                }).then(response => {
+                    console.log(response)
+                    this.$emit('actualizado',this.nombre)
+                    alert("Si, sirvio!!! :D")
+                    
+                }, response => {
+                    console.log(response.Body)
+                    alert("No, sirvio!!! :(")
+                });
+            }
+            else{
+                alert("Llenar todos los campos")
+            }
         }
     }    
 }

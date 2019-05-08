@@ -49,7 +49,7 @@ func crearReceta(w http.ResponseWriter, req *http.Request){
 	q:="INSERT INTO receta (nombre, preparacion) VALUES ('"+recet.Nombre+	"', '"+recet.Preparacion+"');"
 	// Insert two rows into the "accounts" table.
 	if _, err := db.Exec(q); err != nil {
-		log.Fatal(err)
+		json.NewEncoder(w).Encode(false)
 	}
 
 	fmt.Print(q)
@@ -59,7 +59,7 @@ func crearReceta(w http.ResponseWriter, req *http.Request){
 		q:=			"INSERT INTO ingredientes (nombre,nombre_ingrediente,cantidad ,unidad_medida) VALUES "+
 		"('"+recet.Nombre+"','"+element.Nombre+"',"+fmt.Sprintf("%f", element.Cantidad)+",'"+element.Unidad+"');"
 		if _, err := db.Exec(q); err != nil {
-			log.Fatal(err)
+			json.NewEncoder(w).Encode(false)
 		}			
 
 		fmt.Print(q)
@@ -176,7 +176,7 @@ func actualizarReceta(w http.ResponseWriter, req *http.Request){
 	
 	_, err = db.Exec(q)
 	if err != nil {
-	  panic(err)
+	  json.NewEncoder(w).Encode(false)
 	}
 	fmt.Print(q)
 
@@ -185,7 +185,7 @@ func actualizarReceta(w http.ResponseWriter, req *http.Request){
 		q:=	"INSERT INTO ingredientes (nombre,nombre_ingrediente,cantidad ,unidad_medida) VALUES "+
 		"('"+params["nombre"]+"','"+element.Nombre+"',"+fmt.Sprintf("%f", element.Cantidad)+",'"+element.Unidad+"');"
 		if _, err := db.Exec(q); err != nil {
-			log.Fatal(err)
+			json.NewEncoder(w).Encode(false)
 		}
 
 		fmt.Print(q)
@@ -195,7 +195,7 @@ func actualizarReceta(w http.ResponseWriter, req *http.Request){
 	
 	_, err = db.Exec(q)
 	if err != nil {
-	  panic(err)
+	  json.NewEncoder(w).Encode(false)
 	}
 	fmt.Print(q)
 

@@ -3,9 +3,11 @@
         <b-row>
             <b-col sm="3">
                 <b-input
+                type="text"
                 v-model="nombre"
                 placeholder="Nombre Ingrediente"
                 v-on:keyup="$emit('childToParent', {nom:nombre, ident:num})"
+                required
                 ></b-input>
             </b-col>
 
@@ -17,6 +19,7 @@
                 placeholder="cantidad"
                 v-on:keyup="$emit('childToParent', {cant:parseFloat(cantidad), ident:num})"
                 v-on:change="$emit('childToParent', {cant:parseFloat(cantidad), ident:num})"
+                required
                 ></b-input>
             </b-col>
             .
