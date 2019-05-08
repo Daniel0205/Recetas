@@ -160,6 +160,47 @@ func consultarNombres(w http.ResponseWriter, req *http.Request){
 
 func actualizarReceta(w http.ResponseWriter, req *http.Request){
 
+	params := mux.Vars(req)
+
+	var recet Receta 
+	_ = json.NewDecoder(req.Body).Decode(&recet)
+	
+	// Connect to the "bank" database.
+	db, err := sql.Open("postgres", "postgresql://chef@localhost:26257/recetas?sslmode=disable")
+	
+	if err != nil {
+		log.Fatal("error connecting to the database: ", err)
+	}
+
+	q := "DELETE FROM ingredientes WHERE nombre='"+params["nombre"]+"';"
+	
+	_, err = db.Exec(q)
+	if err != nil {
+	  panic(err)
+	}
+	fmt.Print(q)
+
+	for _, element := range recet.Ingredientes {
+
+		q:=	"INSERT INTO ingredientes (nombre,nombre_ingrediente,cantidad ,unidad_medida) VALUES "+
+		"('"+params["nombre"]+"','"+element.Nombre+"',"+fmt.Sprintf("%f", element.Cantidad)+",'"+element.Unidad+"');"
+		if _, err := db.Exec(q); err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Print(q)
+	}
+
+	q = "UPDATE receta SET nombre='"+recet.Nombre+"' , preparacion='"+recet.Preparacion+"' WHERE nombre='"+params["nombre"]+"';"
+	
+	_, err = db.Exec(q)
+	if err != nil {
+	  panic(err)
+	}
+	fmt.Print(q)
+
+	json.NewEncoder(w).Encode(true)
+
 
 }
 
@@ -173,7 +214,7 @@ func borrarReceta(w http.ResponseWriter, req *http.Request) {
 		log.Fatal("error connecting to the database: ", err)
 	}
 
-	q := "DELETE FROM receta WHERE nombre='"+params["nombre"]+"';"
+	q := "DELETE FROM ingredientes WHERE nombre='"+params["nombre"]+"';"
 	
 	_, err = db.Exec(q)
 	if err != nil {
@@ -231,7 +272,7 @@ func main() {
 	router.HandleFunc("/receta", crearReceta).Methods("POST")
 	router.HandleFunc("/receta", consultarNombres).Methods("GET")
   router.HandleFunc("/receta/{nombre}", consultarReceta).Methods("GET")
-  router.HandleFunc("/actualizar", actualizarReceta).Methods("POST")
+  router.HandleFunc("/receta/{nombre}", actualizarReceta).Methods("POST")
   router.HandleFunc("/receta/{nombre}", borrarReceta).Methods("DELETE")
 
 	log.Fatal(http.ListenAndServe(":3000", handlers.CORS(handlers.AllowedHeaders(

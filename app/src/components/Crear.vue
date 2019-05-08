@@ -121,7 +121,19 @@ export default {
         },
 
         actualizar: function(){
-
+            this.$http.post('http://localhost:3000/receta/'+this.nombreInicial,
+                    {preparacion:this.preparacion,
+                    nombre:this.nombre,
+                    ingredientes:this.ingredientes
+            }).then(response => {
+                console.log(response)
+                this.$emit('actualizado',this.nombre)
+                alert("Si, sirvio!!! :D")
+                
+            }, response => {
+                console.log(response.Body)
+                alert("No, sirvio!!! :(")
+            });
         }
     }    
 }

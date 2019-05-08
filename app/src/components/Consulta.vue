@@ -33,7 +33,8 @@
         
         <div  v-if="estado=='actualizar'">
             <Crear :tipo="'actualizar'" :nom="nombre" :prep="preparacion" 
-            :ing="ingredientes" v-on:cancelar="()=>{estado='null',escogido='null'}"> </Crear>
+            :ing="ingredientes" v-on:cancelar="()=>{estado='null',escogido='null'}" 
+            v-on:actualizado="(x)=>{consultarNombres();escogido=x;consultar(x)}"> </Crear>
         </div>
 
     </div>
@@ -77,6 +78,7 @@ export default {
         },
 
         consultar:function(event){
+            console.log(event)
 
             if(event==null){
                 this.estado="null"
