@@ -6,17 +6,21 @@
         v-model="escogido"
         :value="null"
         v-on:change="consultar"
+        id="select"
         >
             <option slot="first" :value="null">Seleccione una receta</option>
         </b-form-select>
 
-        <div v-if="estado=='consulta'" class="card" style="width: 18rem;">
+        <h2 v-if="estado=='consulta'">Consultar Receta</h2>
+        <h2 v-if="estado=='actualizar'">Actualizar Receta</h2>
+
+        <div v-if="estado=='consulta'" id="card" class="card" >
     
             <h3 class="card-text">{{nombre.toUpperCase()}}</h3>
-            <h4>Ingredientes: </h4>
+            <h4 v-if="ingredientes.length!=0">Ingredientes: </h4>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item" v-for="(ingrediente,index) in ingredientes" v-bind:key="index">
-                    {{index+1}}) {{ingrediente.cantidad}}.{{ingrediente.unidad}} de {{ingrediente.nombre}}  
+                    {{index+1}}) {{ingrediente.cantidad}} {{ingrediente.unidad}} de {{ingrediente.nombre}}  
                     
                 </li>
             </ul>
@@ -24,7 +28,7 @@
                 <h4>Preparacion: </h4>
                <p>{{preparacion}}</p>
             </div>
-            <div cclass="card-footer text-muted">
+            <div class="card-footer text-muted" id="foot">
                 <b-button variant="outline-primary" v-on:click="estado='actualizar'" id="actualizar" >Actualizar</b-button>
                 <b-button variant="outline-primary" v-on:click="borrarReceta" id="borrar" >Borrar</b-button>
             </div>
@@ -73,7 +77,7 @@ export default {
             .then(response => {
                 this.recetas=response.body
             }, response => {
-                alert("No, sirvio!!! :(")
+                alert("Hubo un problema al conectar con la base de datos")
             });
         },
 
@@ -91,10 +95,11 @@ export default {
                 this.estado='consulta'
                 this.nombre=response.body.nombre
                 this.preparacion=response.body.preparacion
-                this.ingredientes = response.body.ingredientes 
+                if(response.body.ingredientes!=null) this.ingredientes = response.body.ingredientes
+                else  this.ingredientes=[]
                 
             }, response => {
-                
+                alert("Hubo un problema al conectar con la base de datos")
             });
         },
 
@@ -104,10 +109,10 @@ export default {
                 this.estado="null"
                 this.escogido='null',
                 this.consultarNombres()
-                alert("si, sirvio!!! :(")
+                alert("Receta borrada exitosamente")
                 this.estado='null'
             }, response => {
-                alert("No, sirvio!!! :(")
+                alert("Hubo un problema al conectar con la base de datos")
             });            
 
         },
@@ -117,6 +122,39 @@ export default {
 </script>
 
 <style>
+
+#select{
+    margin-top: 2%;
+    margin-left: 25%;
+    margin-right: 25%;
+    width: 50%;
+}
+
+#card{
+    
+    width: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
+    margin-top: 2%;
+    padding: 3%;
+    border-radius: 10px;
+    background-color: #ffec61;
+
+}
+
+#foot{
+    background-color: #ffec61;
+    text-align: center    
+}
+
+h2 {
+    text-align: center;
+    margin-top: 2%;
+}
+
+#actualizar{
+    margin-right: 5%
+}
 
 </style>
 

@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div id="ingre">
         <b-row>
-            <b-col sm="3">
+            <b-col>
                 <b-input
                 type="text"
                 v-model="nombre"
@@ -11,7 +11,7 @@
                 ></b-input>
             </b-col>
 
-            <b-col sm="3">
+            <b-col >
                 <b-input
                 type="number"
                 step="0.1"
@@ -22,8 +22,8 @@
                 required
                 ></b-input>
             </b-col>
-            .
-            <b-col sm="3">
+            
+            <b-col >
                 <b-form-select
                 :options="{ 'Ltr': 'Ltr', 'gr': 'gr', 'kilo': 'kilo' }"
                 v-model="unidad"
@@ -32,6 +32,9 @@
                 >
                     <option slot="first" :value="null">Elegir unidad de medida</option>
                 </b-form-select>
+            </b-col>
+            <b-col >
+                <b-button variant="outline-primary" id="crear" v-on:click="$emit('eliminar',num)">Eliminar</b-button>
             </b-col>
         </b-row>
     </div>
@@ -76,5 +79,9 @@ export default {
 }
 </script>
 <style>
+
+#ingre{
+    margin-bottom: 5%    
+}
 
 </style>

@@ -1,24 +1,29 @@
 <template>
 
-    <div>
+    <div id="crea">
+
+        <h3  v-if="tipo=='crear'"> Crear Receta</h3>
+        <h3  v-if="tipo=='actualizar'"> Crear Receta</h3>
         <b-input
+            id="nom"
             type="text"
             placeholder="Nombre Receta"
             v-model="nombre"
             required            
         ></b-input>
         <Ingrediente v-for="(ingrediente,index) in ingredientes" 
-        v-on:childToParent="actualizarComponente" :num="index" v-bind:key="index" 
-        :nom="ingrediente.nombre.toUpperCase()" :can="ingrediente.cantidad" :uni="ingrediente.unidad"/>
+        v-on:childToParent="actualizarComponente" :num="index" 
+        v-bind:key="index+ingrediente.nombre+ingrediente.cantidad+ingrediente.unidad" 
+        :nom="ingrediente.nombre" :can="ingrediente.cantidad" :uni="ingrediente.unidad"
+        v-on:eliminar="eliminarIngrediente" />
 
         <b-button variant="outline-primary" v-on:click="agregarIngrediente" >Agregar ingrediente</b-button>
-        <b-button variant="outline-primary" v-on:click="eliminarIngrediente" >Eliminar ingrediente</b-button>
-        <b-input
+        <b-textarea
             type="text"
             placeholder="Preparacion"
             v-model="preparacion"
             required
-        ></b-input>
+        ></b-textarea>
         <b-button v-if="tipo=='crear'" variant="outline-primary"  v-on:click="crear">Crear receta</b-button>
         <b-button v-if="tipo=='actualizar'" variant="outline-primary"  v-on:click="actualizar">Actualizar receta</b-button>
         <b-button v-if="tipo=='actualizar'" variant="outline-primary"  
@@ -50,7 +55,7 @@ export default {
             nombre:'',
             ingredientes:[{nombre:'',
                            cantidad:0,
-                           unidad:''}]
+                           unidad:'null'}]
         }
     },
 
@@ -81,13 +86,15 @@ export default {
         agregarIngrediente: function(){
             this.ingredientes.push({nombre:'',
                                         cantidad:0,
-                                        unidad:''})            
+                                        unidad:'null'})            
             console.log(this.ingredientes)
         },
 
-        eliminarIngrediente: function(){
-            this.ingredientes.pop()            
-            console.log(this.ingredientes)
+        eliminarIngrediente: function(e){
+            console.log(e)
+            console.log(this.ingredientes.splice(e, 1))
+            this.ingredientes=this.ingredientes
+            
         },
 
         actualizarComponente:function(e){
@@ -108,19 +115,19 @@ export default {
         
 
         crear: function(){
-            
+    
             if(this.nombre.length!=0 && this.preparacion.length!=0 && this.ingredientesLlenos()){
                 this.$http.post('http://localhost:3000/receta',
                         {preparacion:this.preparacion,
                         nombre:this.nombre,
                         ingredientes:this.ingredientes
                 }).then(response => {
-                    console.log(response)
+                    
                     this.$emit('creado')
-                    alert("Si, sirvio!!! :D")
+                    alert("Receta creada exitosamente!")
                     
                 }, response => {
-                    alert("No, sirvio!!! :(")
+                    alert("Hubo un problema al conectar con la base de datos")
                 });
             }
             else{
@@ -131,26 +138,31 @@ export default {
         ingredientesLlenos:function(){
             for (let i = 0; i < this.ingredientes.length; i++) {
                  if(this.ingredientes[i].nombre.length==0
-                  || this.ingredientes[i].preparacion.length==0)return false
+                  || this.ingredientes[i].unidad.length==0)return false
             }
                
             return true
         },
 
         actualizar: function(){
+            console.log( this.preparacion)
+            console.log( this.nombreInicial)
+            console.log( this.nombre)
+            console.log( this.ingredientes)
+            console.log("ASFFFFFFFFFFFFFFFFFF")
+
             if(this.nombre.length!=0 && this.preparacion.length!=0 && this.ingredientesLlenos()){
                 this.$http.post('http://localhost:3000/receta/'+this.nombreInicial,
                         {preparacion:this.preparacion,
                         nombre:this.nombre,
                         ingredientes:this.ingredientes
                 }).then(response => {
-                    console.log(response)
+                
                     this.$emit('actualizado',this.nombre)
-                    alert("Si, sirvio!!! :D")
+                    alert("Receta actualizada exitosamente")
                     
                 }, response => {
-                    console.log(response.Body)
-                    alert("No, sirvio!!! :(")
+                    alert("Hubo un problema al conectar con la base de datos")
                 });
             }
             else{
@@ -162,5 +174,27 @@ export default {
 
 </script>
 <style>
+
+#crea{
+    display: inline-block;
+    padding: 5%;
+    background-color: #ffec61;
+    margin-left: 25%;
+    margin-right: 25%;
+    width: 50%;
+    border-radius: 15px;
+}
+
+#nom{
+    margin-bottom: 5%;
+}
+
+textarea{
+    margin-bottom: 5%;
+    margin-top: 5%;
+    border-radius: 10px;
+}
+
+
 
 </style>

@@ -83,8 +83,11 @@ func consultarReceta(w http.ResponseWriter, req *http.Request){
 		log.Fatal("error connecting to the database: ", err)
 	}
 
-	q := "SELECT * FROM receta NATURAL JOIN ingredientes WHERE nombre='"+params["nombre"]+"';"
+	q := "SELECT receta.nombre,preparacion,nombre_ingrediente,cantidad,unidad_medida FROM receta LEFT OUTER JOIN ingredientes"+
+			 " ON receta.nombre=ingredientes.nombre AND receta.nombre='"+params["nombre"]+"';"
 	
+	fmt.Print(q)
+	fmt.Print("\n")	
 	
 	// Print out the balances.
 	rows, err := db.Query(q)
@@ -93,23 +96,25 @@ func consultarReceta(w http.ResponseWriter, req *http.Request){
 	}
 	
 	defer rows.Close()
-	
-	fmt.Print(q)
-	fmt.Print("\n")
-
 
     for rows.Next() {
-		var nombre,preparacion,nomIngrediente,unidad string 
-		var cantidad float32
+		var nombre,preparacion,nomIngrediente,unidad *string 
+		var cantidad *float32
         if err := rows.Scan(&nombre,&preparacion,&nomIngrediente,&cantidad,&unidad); err != nil {
             log.Fatal(err)
 		}
-		receta.Nombre = nombre
-		receta.Preparacion = preparacion
-		ingrediente.Nombre = nomIngrediente
-		ingrediente.Unidad = unidad
-		ingrediente.Cantidad = cantidad
-		receta.Ingredientes = append(receta.Ingredientes,ingrediente)	
+		receta.Nombre = *nombre
+		receta.Preparacion = *preparacion
+		fmt.Print(ingrediente.Nombre)
+		if(nomIngrediente!= nil){
+			
+			ingrediente.Nombre = *nomIngrediente
+			ingrediente.Unidad = *unidad
+			ingrediente.Cantidad = *cantidad
+			receta.Ingredientes = append(receta.Ingredientes,ingrediente)	
+		}
+
+		
 		
 	}
 	fmt.Print(receta)
@@ -122,7 +127,8 @@ func consultarReceta(w http.ResponseWriter, req *http.Request){
 func consultarNombres(w http.ResponseWriter, req *http.Request){
 	
 
-	var nombres []string
+	
+	nombres := make([]string, 0)	
 
 	db, err := sql.Open("postgres", "postgresql://chef@localhost:26257/recetas?sslmode=disable")
 	 if err != nil {
@@ -214,7 +220,7 @@ func borrarReceta(w http.ResponseWriter, req *http.Request) {
 		log.Fatal("error connecting to the database: ", err)
 	}
 
-	q := "DELETE FROM ingredientes WHERE nombre='"+params["nombre"]+"';"
+	q := "DELETE FROM receta WHERE nombre='"+params["nombre"]+"';"
 	
 	_, err = db.Exec(q)
 	if err != nil {
@@ -226,45 +232,6 @@ func borrarReceta(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-/*
-	// Connect to the "bank" database.
-	db, err := sql.Open("postgres", "postgresql://chef@localhost:26257/recetas?sslmode=disable")
-	 
-	if err != nil {
-		log.Fatal("error connecting to the database: ", err)
-	}
-
-	 // Create the "receta" table.
-	 if _, err := db.Exec(
-		 "CREATE TABLE IF NOT EXISTS receta (nombre TEXT PRIMARY KEY,preparacion TEXT NOT NULL);"); err != nil {
-		 log.Fatal(err)
-	 }
- 
-	 // Insert two rows into the "accounts" table.
-	 if _, err := db.Exec(
-		 "CREATE TABLE IF NOT EXISTS ingredientes(nombre_ingrediente TEXT NOT NULL,cantidad REAL NOT NULL, "+
-			"unidad_medida varchar(5) NOT NULL,nombre TEXT,FOREIGN KEY (nombre) REFERENCES receta(nombre));"); err != nil {
-		 log.Fatal(err)
-	 }
-
-	// Insert two rows into the "accounts" table.
-	if _, err := db.Exec(
-		"INSERT INTO receta (nombre, preparacion) VALUES ('milo frio', 'revolver todo'), ('huevo frito', 'batir')"); err != nil {
-		log.Fatal(err)
-	}
-
-	if _, err := db.Exec(
-		"INSERT INTO ingredientes (nombre,nombre_ingrediente,cantidad ,unidad_medida) VALUES "+
-		"('milo frio','leche',1.5,'Lt'), ('milo frio', 'milo',1, 'gr')"); err != nil {
-		log.Fatal(err)
-	}
-
-	if _, err := db.Exec(
-		"INSERT INTO ingrediente (nombre,nombre_ingrediente,cantidad ,unidad_medida) VALUES "+
-		"('huevo frito','aceite',0.2,'mLt'), ('huevo frito','huevo','1', 'Unid')"); err != nil {
-		log.Fatal(err)
-	}
-*/
 
   router := mux.NewRouter()
 
