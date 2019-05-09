@@ -18,7 +18,8 @@ CREATE TABLE ingredientes (
 );
 
 CREATE USER IF NOT EXISTS chef;
-GRANT ALL ON DATABASE recetas TO chef;
+GRANT ALL ON TABLE receta TO chef;
+GRANT ALL ON TABLE ingredientes TO chef;
 
 
 INSERT INTO receta (nombre, preparacion) VALUES ('milo frio', 'revolver todo'), ('huevo frito', 'batir');
