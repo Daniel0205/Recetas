@@ -8,12 +8,12 @@
 >`cockroach start --insecure --listen-addr=localhost:26257`
 
 + Despues en una nueva consola ejecutar:<br />
->`cockroach start \
-  insecure \
-  store=node2 \
-  listen-addr=localhost:26258 \
-  http-addr=localhost:8081 \
-  join=localhost:26257`
+>`cockroach start 
+--insecure 
+--store=node2 
+--listen-addr=localhost:26258 
+--http-addr=localhost:8081 
+--join=localhost:26257`
   
 + Estos comandos empezaran a correr los nodos donde se encontrar la base de datos, por lo tanto deben estar corriendo en simultaneo con al aplicacion.
 
