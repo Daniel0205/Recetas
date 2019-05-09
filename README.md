@@ -5,10 +5,10 @@
 
 # Configuracion de CockroachDB 
 + Ejecutar el siguiente comando en la consola:<br />
->`-cockroach start --insecure --listen-addr=localhost:26257`
+>`cockroach start --insecure --listen-addr=localhost:26257`
 
 + Despues en una nueva consola ejecutar:<br />
->`-cockroach start \
+>`cockroach start \
   insecure \
   store=node2 \
   listen-addr=localhost:26258 \
