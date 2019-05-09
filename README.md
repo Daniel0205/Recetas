@@ -1,5 +1,7 @@
 # Requisitos:
--CockroachDB 
++ CockroachDB  v19.1.0 <br />
++ Manejador de paquetes npm v6.9.0 <br />
++ go version go1.11.9 <br />
 
 # Configuracion de CockroachDB 
 + Ejecutar el siguiente comando en la consola:<br />
