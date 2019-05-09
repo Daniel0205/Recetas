@@ -21,7 +21,7 @@
 # Configuracion de la base de datos
 + En una nueva consola ejecutar los siguientes comandos:<br />
 > `cockroach sql --insecure`<br />
-> `create database recetas;`<br />
+> `CREATE DATABASE IF NOT EXISTS recetas;`<br />
 > `set database = recetas;`<br />
 
 + Y finalmente ejecutar los scripts para crear la base de datos, que se encuentran en el archivo [scripts.sql](https://github.com/Daniel0205/Recetas/blob/master/scripts.sql) del repositorio
