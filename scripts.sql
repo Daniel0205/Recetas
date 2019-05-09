@@ -1,23 +1,20 @@
 
 CREATE DATABASE IF NOT EXISTS recetas;
 
-DROP TABLE IF EXISTS recetas.receta ;
-CREATE TABLE  recetas.receta (
-	nombre STRING NOT NULL,
-	preparacion STRING NOT NULL,
-	CONSTRAINT "primary" PRIMARY KEY (nombre ASC),
-	FAMILY "primary" (nombre, preparacion)
+DROP TABLE IF EXISTS receta ;
+CREATE TABLE  receta (
+	nombre STRING PRIMARY KEY,
+	preparacion STRING NOT NULL
 );
 
-DROP TABLE IF EXISTS recetas.ingredientes;
-CREATE TABLE recetas.ingredientes (
+DROP TABLE IF EXISTS ingredientes;
+CREATE TABLE ingredientes (
 	nombre_ingrediente STRING NOT NULL,
 	cantidad FLOAT4 NOT NULL,
 	unidad_medida VARCHAR(5) NOT NULL,
 	nombre STRING NULL,
 	CONSTRAINT fk_nombre FOREIGN KEY (nombre) REFERENCES receta (nombre) ON DELETE CASCADE ON UPDATE CASCADE,
-	INDEX ingredientes_auto_index_fk_nombre_ref_receta (nombre ASC),
-	FAMILY "primary" (nombre_ingrediente, cantidad, unidad_medida, nombre, rowid)
+	INDEX ingredientes_auto_index_fk_nombre_ref_receta (nombre ASC)
 );
 
 CREATE USER IF NOT EXISTS chef;
