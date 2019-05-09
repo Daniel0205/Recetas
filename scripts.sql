@@ -29,5 +29,5 @@ INSERT INTO receta (nombre, preparacion) VALUES ('milo frio', 'revolver todo'), 
 INSERT INTO ingredientes (nombre,nombre_ingrediente,cantidad ,unidad_medida) VALUES 
 ('milo frio','leche',1.5,'Lt'), ('milo frio', 'milo',1, 'gr');
 
-INSERT INTO ingrediente (nombre,nombre_ingrediente,cantidad ,unidad_medida) VALUES
+INSERT INTO ingredientes (nombre,nombre_ingrediente,cantidad ,unidad_medida) VALUES
 ('huevo frito','aceite',0.2,'mLt'), ('huevo frito','huevo','1', 'Unid');
