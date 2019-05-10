@@ -101,6 +101,8 @@ export default {
             }, response => {
                 alert("Hubo un problema al conectar con la base de datos")
             });
+            console.log(this.nombre)
+            console.log(this.preparacion)
         },
 
         borrarReceta:function(){

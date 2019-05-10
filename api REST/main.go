@@ -84,7 +84,7 @@ func consultarReceta(w http.ResponseWriter, req *http.Request){
 	}
 
 	q := "SELECT receta.nombre,preparacion,nombre_ingrediente,cantidad,unidad_medida FROM receta LEFT OUTER JOIN ingredientes"+
-			 " ON receta.nombre=ingredientes.nombre AND receta.nombre='"+params["nombre"]+"';"
+			 " ON receta.nombre=ingredientes.nombre WHERE receta.nombre='"+params["nombre"]+"';"
 	
 	fmt.Print(q)
 	fmt.Print("\n")	
